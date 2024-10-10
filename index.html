@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <style>
+            #gear:hover {
+                cursor: pointer;
+            }
+        </style>
+        <title>Countdown</title>
+    </head>
+    <body style="background-color: black; overflow: hidden;">
+        <img id="backImg" style="position: absolute; width: 100%; height: auto; top: 50%; left: 50%; transform: translate(-50%, -50%); filter: brightness(50%);" src="Backgrounds/Back1.png">
+        <h1 id="title" style="position: absolute; left: 50%; transform: translateX(-50%); text-align: center; color: white; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; font-size: 350%; width: 100%;">Game Night @ 7:00pm HST</h1>
+        <h1 id="Timer" style="margin: 0; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; font-size: 750%; color: white; border: 4px solid white; border-radius: 1000000px; padding: 1%; text-align: center; text-shadow: 0 0 16px #000; max-width: 90%;">Something broke</h1>
+        <div id="music_playlist" style="position: absolute;"></div>
+        <div id="settings" style="width: 20%; background-color: rgba(0, 0, 0, 0.5); height: 10000px; position: absolute; right: calc(-20% - 2px); top: 0; border-left: 2px inset #fff; backdrop-filter: blur(8px); text-align: center;">
+            <img id="gear" src="gear.png" style="width: 48px; left: -54px; position: absolute; bottom: 4px;">
+            <h1 style="text-align: center; color: white; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; font-size: xx-large;">Settings</h1>
+            <h3 style="color: white; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; font-weight: normal;">Title</h3>
+            <input id="titleIn" type="text" style="width: 75%; height: 1em; padding: 0.5em; background-color: rgba(0, 0, 0, 0); border: 2px solid white; color: white; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; font-size: 1em;" placeholder="Game Night @ 7:00pm HST">
+            <button id="titleSet" style="width: 50%; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; font-size: large; margin-top: 0.5em; background-color: greenyellow; border: 2px solid black;">Set</button>
+            <h3 style="color: white; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; font-weight: normal;">Timer</h3>
+            <input id="timerDate" type="datetime-local" style="width: 75%; height: 1em; padding: 0.5em; background-color: rgba(0, 0, 0, 0); border: 2px solid black; color: black; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; font-size: 1.5em; filter: invert();">
+            <button id="timerSet" style="width: 50%; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; font-size: large; margin-top: 0.5em; background-color: greenyellow; border: 2px solid black;">Set</button>
+            <br>
+            <div style="display: flex; justify-content: center;">
+                <input id="needmorepeople" type="checkbox" style="margin: 0;">
+                <p style="width: 50%; margin: 0; color: white; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; font-size: medium;">Not enough people</p>
+            </div>
+            <h3 style="color: white; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; font-weight: normal;">Playlist</h3>
+            <input id="playlistID" type="text" style="width: 75%; height: 1em; padding: 0.5em; background-color: rgba(0, 0, 0, 0); border: 2px solid white; color: white; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; font-size: 1em;" placeholder="Playlist ID">
+            <p style="color: gray; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; font-size: small; margin-top: 0;">Eg. "PLCV1C6Xt0zUZWgMmUe_q1VxhRv5Ait0Zj"</p>
+            <button id="playlistSet" style="width: 50%; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; font-size: large; margin-top: 0.5em; background-color: greenyellow; border: 2px solid black;">Set</button>
+            <h3 style="color: white; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; font-weight: normal;" id="VolumeHead">Volume (25%)</h3>
+            <input id="playerVol" type="range" min="0" max="100" value="25" style="width: 75%; padding: 0.5em;">
+            <p style="color: gray; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; font-size: small; margin-top: 0; position: absolute; left: 2em;">0%</p>
+            <p style="color: gray; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; font-size: small; margin-top: 0; position: absolute; width: 100%; text-align: center;">50%</p>
+            <p style="color: gray; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; font-size: small; margin-top: 0; position: absolute; right: 2em;">100%</p>
+            <h3 style="color: white; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; font-weight: normal;">Footer</h3>
+            <input id="footerText" type="text" style="width: 75%; height: 1em; padding: 0.5em; background-color: rgba(0, 0, 0, 0); border: 2px solid white; color: white; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; font-size: 1em;" placeholder="Feel free to share any playlist recommendations you have! (Youtube playlists only)" maxlength="85">
+            <button id="footerSet" style="width: 50%; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; font-size: large; margin-top: 0.5em; background-color: greenyellow; border: 2px solid black;">Set</button>
+            <h3 style="color: white; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; font-weight: normal;">Misc</h3>
+            <button id="cookieSave" style="width: 50%; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; font-size: large; margin-top: 0.5em; background-color: greenyellow; border: 2px solid black;">Save Settings</button>
+            <button id="cookieLoad" style="width: 50%; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; font-size: large; margin-top: 0.5em; background-color: rgb(128, 128, 128); border: 2px solid black;">Load Settings</button>
+        </div>
+        <p id="footer" style="color: white; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; text-align: center; position: absolute; bottom: 0; width: 50%; left: 25%;">Feel free to share any playlist recommendations you have! (Youtube playlists only)</p>
+        <p style="color: white; position: absolute; left: 0; bottom: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0;">©️2024 Alex Gan | <a href="" style="color: rgb(56, 103, 255);">Github</a></p>
+        <p id="NowPlaying" style="color: white; position: absolute; top: 0; left: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; font-size: large;"></p>
+
+        <script>
+            function setCookie(cname, cvalue) {
+                const d = new Date();
+                d.setTime(d.getTime() + 31536000000);
+                let expires = "expires="+d.toUTCString();
+                document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
+            }
+
+            function getCookie(cname) {
+                let name = cname + "=";
+                let ca = document.cookie.split(';');
+
+                for(let i = 0; i < ca.length; i++) {
+                    let c = ca[i];
+                    while (c.charAt(0) == ' ') {
+                        c = c.substring(1);
+                    }
+                    if (c.indexOf(name) == 0) {
+                        return c.substring(name.length, c.length);
+                    }
+                }
+
+                return "";
+            }
+
+            document.getElementById("cookieSave").onclick = function() {
+                setCookie("title", document.getElementById("titleIn").value)
+                setCookie("timerDate", document.getElementById("timerDate").value)
+                setCookie("needmorepeople", document.getElementById("needmorepeople").value)
+                setCookie("playlistID", document.getElementById("playlistID").value)
+                setCookie("playerVol", document.getElementById("playerVol").value)
+                setCookie("footerText", document.getElementById("footerText").value)
+
+                if (document.cookie !== "") {
+                    document.getElementById("cookieLoad").style.backgroundColor = "greenyellow"
+                }
+            }
+
+            document.getElementById("cookieLoad").onclick = function() {
+                if (document.cookie == "") {
+                    return;
+                }
+
+                document.getElementById("titleIn").value = getCookie("title")
+                document.getElementById("timerDate").value = getCookie("timerDate")
+                document.getElementById("playerVol").value = getCookie("playerVol")
+                document.getElementById("footerText").value = getCookie("footerText")
+                document.getElementById("playlistID").value = getCookie("playlistID")
+
+                if (getCookie("playlistID") == "") {
+                    document.getElementById("playlistID").value = "PLCV1C6Xt0zUZWgMmUe_q1VxhRv5Ait0Zj"
+                }
+
+                document.getElementById("titleSet").click()
+                document.getElementById("timerSet").click()
+                document.getElementById("needmorepeople").checked = (getCookie("needmorepeople") == "on" ? true : false)
+                Reflect.set(document.getElementById("needmorepeople"), "value", getCookie("needmorepeople"))
+                //if (getCookie("needmorepeople") != document.getElementById("needmorepeople").value) {
+                //    document.getElementById("needmorepeople").click()
+                //}
+                document.getElementById("playlistSet").click()
+                document.getElementById("footerSet").click()
+                document.getElementById("VolumeHead").innerText = "Volume (" + Math.max(Math.min(Number(document.getElementById("playerVol").value), 500), 0) + "%)"
+            }
+
+            if (document.cookie !== "") {
+                document.getElementById("cookieLoad").style.backgroundColor = "greenyellow"
+            }
+        </script>
+        <script>
+            var settingsOpen = false;
+            var t = 1;
+
+            document.getElementById("gear").onclick = function() {
+                settingsOpen = !settingsOpen;
+                t = 0;
+            }
+
+            function settingsTranslate() {
+                if (t > 1) {t = 1}
+
+                if (settingsOpen) {
+                    document.getElementById("settings").style.right = ((1 - t) * -20) + "%";
+                    document.getElementById("gear").style.rotate = -(360 * t) + "deg"
+                } else {
+                    if (t == 1) {
+                        document.getElementById("settings").style.right = "calc(-20% - 2px)";
+                        document.getElementById("gear").style.rotate = "360deg"
+                    } else {
+                        document.getElementById("settings").style.right = (t * -20) + "%";
+                        document.getElementById("gear").style.rotate = (360 * t) + "deg"
+                    }
+                }
+
+                t += 0.02;
+            }
+
+            setInterval(() => {
+                settingsTranslate()
+            }, 10);
+        </script>
+        <script async src="https://www.youtube.com/iframe_api"></script>
+        <script>
+            var player;
+            var shuffle = false;
+            function onYouTubeIframeAPIReady() {
+                player = new YT.Player('music_playlist', {
+                    width: 355.5,               // Player width (in px)
+                    height: 200,              // Player height (in px)
+                    playerVars: {
+                        listType:'playlist',
+                        list: 'PLCV1C6Xt0zUZWgMmUe_q1VxhRv5Ait0Zj',
+                        enablejsapi: 1,
+                        autoplay: 1,        // Auto-play the video on load
+                        controls: 0,        // Show pause/play buttons in player
+                        showinfo: 0,        // Hide the video title
+                        modestbranding: 1,  // Hide the Youtube Logo
+                        loop: true,            // Run the video in a loop
+                        fs: 0,              // Hide the full screen button
+                        cc_load_policy: 0, // Hide closed captions
+                        iv_load_policy: 3,  // Hide the Video Annotations
+                        autohide: 1         // Hide video controls when playing
+                    },
+                    events: {
+                        onError: function(e){
+                            e.target.nextVideo();
+                            e.target.playVideo();
+                        },
+                        onStateChange: function(e) {
+                            if (e.data == 1) {
+                                if (!shuffle) {
+                                    shuffle = true;
+                                    player.setLoop(true);
+                                    e.target.setShuffle(true);
+                                    e.target.nextVideo();
+                                    e.target.playVideo();
+                                    player.setVolume(25);
+                                    player.getIframe().style.left = "-355.5px"
+                                }
+
+                                document.getElementById("NowPlaying").innerText = "♫ Now Playing: " + player.getVideoData().title
+                            }
+                        }
+                    }
+                });
+            }
+            
+            document.getElementById("playlistSet").onclick = function() {
+                player.setLoop(false)
+                //player.stopVideo();
+                player.loadPlaylist({list: document.getElementById("playlistID").value, listType: "playlist"})
+                player.nextVideo()
+                player.playVideo()
+
+                setTimeout(() => {
+                    player.loadPlaylist({list: document.getElementById("playlistID").value, listType: "playlist"})
+                    player.nextVideo();
+                    player.playVideo();
+                    shuffle = false;
+                }, 1000)
+                
+
+                //setTimeout(() => {
+                //    player.loadPlaylist({list: document.getElementById("playlistID").value, listType: "playlist"});
+                //    player.stopVideo();
+                //    player.nextVideo();
+                //    player.playVideo();
+                //    //player.nextVideo();
+                //    //player.playVideo();
+                //    shuffle = false;
+                //}, 2500);
+            }
+
+            document.getElementById("playerVol").oninput = function() {
+                let vol = Math.max(Math.min(Number(document.getElementById("playerVol").value), 500), 0)
+                player.setVolume(vol)
+                document.getElementById("VolumeHead").innerText = "Volume (" + vol + "%)"
+            }
+        </script>
+        <script>
+            let frame = 0
+            let bgs = []
+            const TESTING = false;
+
+            if (TESTING) {
+                let numBgs = 11
+                let bgFileType = [".png", ".jpg", ".jpeg", ".webp", ".gif", ".svg", ".apng", ".avif"]
+
+                for (let index = 0; index < numBgs; index++) {
+                    let found = false
+
+                    for (let index2 = 0; index2 < bgFileType.length; index2++) {
+                        const element = bgFileType[index2];
+                        
+                        fetch("Backgrounds/Back" + index + element, {mode: "no-cors", method: "GET"})
+                        .then(() => {
+                            bgs.push("Back" + index + element)
+                            found = true
+                        })
+                        .catch()
+
+                        if (found) {
+                            break
+                        }
+                    }
+                }
+
+                console.log(bgs)
+            } else {
+                bgs = [
+                    "Back0.png",
+                    "Back1.png",
+                    "Back2.png",
+                    "Back3.png",
+                    "Back4.png",
+                    "Back5.png",
+                    "Back6.jpg",
+                    "Back7.png",
+                    "Back8.webp",
+                    "Back9.webp",
+                    "Back10.jpg"
+                ];
+            }
+
+            function BackCycle() {
+                // 100 frame = 1 sec
+
+                if (frame % 500 >= 450) {
+                    let t = ((frame % 500) - 450) / 50
+                    document.getElementById("backImg").style.filter = "brightness(" + (((1 - t) * 50) + (t * 0)) + "%" + ")"
+                } else if ((frame % 500) <= 50) {
+                    let t = (frame % 500) / 50
+                    document.getElementById("backImg").style.filter = "brightness(" + (((1 - t) * 0) + (t * 50)) + "%" + ")"
+                } else {
+                    document.getElementById("backImg").style.filter = "brightness(50%)"
+                }
+
+                for (let i = 0; i < bgs.length; i++) {
+                    if (Math.floor(frame / 500) % bgs.length == i) {
+                        document.getElementById("backImg").src = "Backgrounds/" + bgs[i]
+                    }
+                }
+                
+                frame++
+            }
+
+            setInterval(BackCycle, 10)
+
+            function format(ms) {
+                let sec = Math.floor(ms / 1000) % 60
+                let min = Math.floor(ms / 60000) % 60
+                let hour = Math.floor(ms / 3600000) % 24
+                let day = Math.floor(ms / 86400000) % 365
+                let year = Math.floor(ms / 31557600000)
+
+                if (year == 0 && day == 0 && hour == 0 && min == 10 && sec == 0) {
+                    document.getElementById("Timer").style.color = "red"
+                } else if (year == 0 && day == 0 && hour == 0 && min == 15 && sec == 0) {
+                    document.getElementById("Timer").style.color = "red"
+                } else if (year == 0 && day == 0 && hour == 0 && min < 5 || (hour == 0 && min == 5 && sec == 0)) {
+                    if (sec % 2 == 0) {
+                        document.getElementById("Timer").style.color = "red"
+                    } else {
+                        document.getElementById("Timer").style.color = "white"
+                    }
+                } else if (year == 0 && day == 0 && hour == 0 && min == 30 && sec == 0) {
+                    document.getElementById("Timer").style.color = "red"
+                }else {
+                    document.getElementById("Timer").style.color = "white"
+                    document.getElementById("Timer").style.fontSize = "750%";
+                }
+
+                if (year > 0) {
+                    return year.toString() + "y " + day.toString() + "d " + hour.toString() + ":" + ("00" + min.toString()).slice(-2) + ":" + ("00" + sec.toString()).slice(-2)
+                }
+
+                if (day > 0) {
+                    return day.toString() + "d " + hour.toString() + ":" + ("00" + min.toString()).slice(-2) + ":" + ("00" + sec.toString()).slice(-2)
+                }
+
+                if (hour > 0) {
+                    return hour.toString() + ":" + ("00" + min.toString()).slice(-2) + ":" + ("00" + sec.toString()).slice(-2)
+                }
+
+                return ("00" + min.toString()).slice(-2) + ":" + ("00" + sec.toString()).slice(-2)
+            }
+
+            let time = new Date()
+
+            function tick() {
+                let now = new Date()
+                let waitAmount = time - now
+                document.getElementById("settings").style.height = window.innerHeight + "px";
+
+                if (waitAmount < 0) {
+                    if (document.getElementById("needmorepeople").checked) {
+                        document.getElementById("Timer").innerText = "Waiting for people..."
+                        document.getElementById("Timer").style.color = "white"
+                        return
+                    } else {
+                        document.getElementById("Timer").innerText = "Starting soon..."
+                        document.getElementById("Timer").style.color = "white"
+                    }
+                } else {
+                    document.getElementById("Timer").innerText = format(waitAmount)
+                }
+            }
+
+            setInterval(tick, 10)
+
+            document.getElementById("timerSet").onclick = function() {
+                var split = document.getElementById("timerDate").value.split("T")
+                var dateSplit = split[0].split("-")
+                time = new Date(dateSplit[1] + " " + dateSplit[2] + ", " + dateSplit[0] + " " + split[1] + ":00")
+            }
+            document.getElementById("titleSet").onclick = function() {
+                if (document.getElementById("titleIn").value.trim() == "") {
+                    document.getElementById("title").innerText = "Game Night @ 7:00pm HST"
+                } else {
+                    document.getElementById("title").innerText = document.getElementById("titleIn").value.trim();
+                }
+            }
+            document.getElementById("footerSet").onclick = function() {
+                if (document.getElementById("footerText").value.trim() == "") {
+                    document.getElementById("footer").innerText = "Feel free to share any playlist recommendations you have! (Youtube playlists only)"
+                } else {
+                    document.getElementById("footer").innerText = document.getElementById("footerText").value.trim();
+                }
+            }
+        </script>
+    </body>
+</html>
