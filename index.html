@@ -114,11 +114,13 @@
             document.getElementById("cookieSave").onclick = function() {
                 setCookie("title", document.getElementById("titleIn").value)
                 setCookie("timerDate", document.getElementById("timerDate").value)
-                setCookie("needmorepeople", document.getElementById("needmorepeople").value)
+                setCookie("needmorepeople", document.getElementById("needmorepeople").checked)
                 setCookie("playlistID", document.getElementById("playlistID").value)
                 setCookie("playerVol", document.getElementById("playerVol").value)
                 setCookie("footerText", document.getElementById("footerText").value)
                 setCookie("playingSelect", document.getElementById("playingSelect").value)
+                setCookie("bgSelect", document.getElementById("bgSelect").value)
+                setCookie("bgID", document.getElementById("bgID").value)
 
                 if (document.cookie !== "") {
                     document.getElementById("cookieLoad").style.backgroundColor = "greenyellow"
@@ -136,6 +138,8 @@
                 document.getElementById("footerText").value = getCookie("footerText")
                 document.getElementById("playlistID").value = getCookie("playlistID")
                 document.getElementById("playingSelect").value = getCookie("playingSelect")
+                document.getElementById("bgSelect").value = getCookie("bgSelect")
+                document.getElementById("bgID").value = getCookie("bgID")
 
                 if (getCookie("playlistID") == "") {
                     document.getElementById("playlistID").value = "PLCV1C6Xt0zUZWgMmUe_q1VxhRv5Ait0Zj"
@@ -143,7 +147,7 @@
 
                 document.getElementById("titleSet").click()
                 document.getElementById("timerSet").click()
-                document.getElementById("needmorepeople").checked = (getCookie("needmorepeople") == "on" ? true : false)
+                document.getElementById("needmorepeople").checked = getCookie("needmorepeople")
                 Reflect.set(document.getElementById("needmorepeople"), "value", getCookie("needmorepeople"))
                 //if (getCookie("needmorepeople") != document.getElementById("needmorepeople").value) {
                 //    document.getElementById("needmorepeople").click()
@@ -159,6 +163,8 @@
                     document.getElementById("playlistID").setAttribute("placeholder", "Playlist ID")
                     document.getElementById("playlistEg").innerText = "Eg. \"PLCV1C6Xt0zUZWgMmUe_q1VxhRv5Ait0Zj\""
                 }
+                bgSelectFunc()
+                document.getElementById("bgSet").click()
             }
 
             if (document.cookie !== "") {
@@ -456,8 +462,10 @@
                 if (!started) { return }
                 let data = player.getVideoData()
 
-                if (data.author == "") {
+                if (!data.author) {
                     document.getElementById("NowPlaying").innerText = "♫ Now Playing:"
+                    document.getElementById("NowPlayingInfo").innerText = ""
+                    return
                 }
 
                 if (data.isLive) {
@@ -472,10 +480,22 @@
             let bg_player_interval = undefined
 
             function bgSelectFunc() {
+                if (document.getElementById("bgSelect").value == "Custom Video") {
+                    document.getElementById("VideoBg").style.display = "block"
+                } else {
+                    document.getElementById("VideoBg").style.display = "none"
+                }
+            }
+
+            document.getElementById("bgSelect").oninput = bgSelectFunc
+
+            document.getElementById("bgSet").onclick = function() {
                 let bgSelectVal = document.getElementById("bgSelect").value
 
                 if (bgSelectVal == "Custom Video") {
                     document.getElementById("VideoBg").style.display = "block"
+                    bg_player_var.setLoop(false)
+                    bg_player_var.loadVideoById(document.getElementById("bgID").value)
                     document.getElementById("bg_player").left = "0"
                     bg_player_var.getIframe().style.left = "0"
                     bg_player_interval = setInterval(() => {
@@ -513,15 +533,6 @@
                     player.getIframe().setAttribute("width", "355.5px")
                     player.getIframe().setAttribute("height", "200px")
                 }
-            }
-
-            document.getElementById("bgSelect").oninput = function() {
-                bgSelectFunc()
-            }
-
-            document.getElementById("bgSet").onclick = function() {
-                bg_player_var.setLoop(false)
-                bg_player_var.loadVideoById(document.getElementById("bgID").value)
             }
         </script>
         <script>
