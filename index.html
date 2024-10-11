@@ -276,7 +276,7 @@
                 }
 
                 if (data.isLive) {
-                    document.getElementById("NowPlayingInfo").innerText = "by: " + player.getVideoData().author + " | (Live since " + format(player.getDuration() * 1000, false) + " ago)"
+                    document.getElementById("NowPlayingInfo").innerText = "by: " + player.getVideoData().author + " | (Live)"
                 } else {
                     document.getElementById("NowPlayingInfo").innerText = "by: " + player.getVideoData().author + " | (" + format(player.getCurrentTime() * 1000, false) + "/" + format(player.getDuration() * 1000, false) + ")"
                 }
