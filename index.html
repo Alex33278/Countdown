@@ -174,7 +174,7 @@
                 return (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent))
             };
 
-            if (!checkMobile()) {
+            if (checkMobile()) {
                 document.getElementById("Warning").innerText = "Mobile is not fully supported!"
                 mobile = true
             }
