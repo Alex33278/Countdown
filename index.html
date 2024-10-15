@@ -161,31 +161,40 @@
         </script>
         <script>
             var muteVid = false
+            var mobile = false
 
             if (/\bCrOS\b/.test(navigator.userAgent)) {
                 document.getElementById("Warning").innerText = "ChromeOS Detected! Music is muted by default."
                 document.getElementById("playerVol").value = 0
                 document.getElementById("VolumeHead").innerText = "Volume (0%)"
                 muteVid = true
-            } else {
-                let readyInterval = setInterval(() => {
-                    if (document.readyState == "complete") {
-                        document.getElementById("ClickAnywhere").innerText = "Press any key to start"
-                        clearInterval(readyInterval)
-                    }
-                }, 10);
             }
 
             function checkMobile() {
                 return (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent))
             };
 
-            if (checkMobile()) {
-                document.getElementById("Warning").innerText = "Mobile is not fully supported! Music is muted to bypass restrictions."
-                document.getElementById("playerVol").value = 0
-                document.getElementById("VolumeHead").innerText = "Volume (0%)"
-                muteVid = true
+            if (!checkMobile()) {
+                document.getElementById("Warning").innerText = "Mobile is not fully supported!"
+                mobile = true
             }
+
+            let readyInterval = setInterval(() => {
+                if (document.readyState == "complete" && !muteVid) {
+                    if (mobile) {
+                        document.getElementById("ClickAnywhere").innerText = "Click on video to start"
+                        let music_playlist = document.getElementById("music_playlist")
+
+                        music_playlist.style.left = "50%"
+                        music_playlist.style.top = "50%"
+                        music_playlist.style.transform = "translate(-50%, -50%)"
+                        music_playlist.style.pointerEvents = "all"
+                    } else {
+                        document.getElementById("ClickAnywhere").innerText = "Press any key to start"
+                    }
+                    clearInterval(readyInterval)
+                }
+            }, 10);
         </script>
         <script>
             function setCookie(cname, cvalue) {
@@ -412,6 +421,12 @@
                             let interval = setInterval(() => {
                                 if (started) {
                                     clearInterval(interval)
+
+                                    let music_playlist = document.getElementById("music_playlist")
+                                    music_playlist.style.left = "-355.5px"
+                                    music_playlist.style.top = "0"
+                                    music_playlist.style.transform = "translate(0, 0)"
+                                    music_playlist.style.pointerEvents = "none"
                                     
                                     let frame2 = 0
                                     let interval2 = setInterval(() => {
