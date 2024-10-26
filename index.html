@@ -37,6 +37,12 @@
                 width: 100%;
                 overflow: hidden;
             }
+
+            .settings_debug_txt {
+                color: white;
+                font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+                font-size: small;
+            }
         </style>
         <link href="favicon.png" rel="icon">
         <title>Countdown</title>
@@ -115,6 +121,16 @@
                     <button id="cookieSave" class="settings_set_button">Save Settings</button>
                     <button id="cookieLoad" class="settings_set_button_inactive">Load Settings</button>
                 </div>
+                <div id="settings-pg-3" class="settings_pg" style="left: 100%;">
+                    <h1 style="font-size: xx-large;">DEBUG</h1>
+                    <h3 style="font-weight: normal;">Timer</h3>
+                    <p id="timerDebug" class="settings_debug_txt">null</p>
+                    <p id="timeRemainDebug" class="settings_debug_txt">0</p>
+                    <h3 style="font-weight: normal;">Music</h3>
+                    <p id="musicDebug" class="settings_debug_txt">null</p>
+                    <h3 style="font-weight: normal;">Cookies</h3>
+                    <p id="cookieDebug" class="settings_debug_txt">null</p>
+                </div>
             </div>
 
             <div id="settings-pg-control" style="width: 100%; height: fit-content; position: absolute; left: 100%; bottom: 0; margin: 2px; margin-bottom: 0;">
@@ -124,7 +140,7 @@
         </div>
         <img id="gear" src="gear.png" style="width: 48px; right: 8px; position: absolute; bottom: 4px; display: none;">
         <p style="color: white; position: absolute; left: 0.1em; bottom: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0;">©️2024 Alex Gan | <a href="https://github.com/Alex33278/Countdown/tree/main" style="color: rgb(56, 103, 255);" target="_blank">Github</a></p>
-        <p id="NowPlaying" style="color: white; position: absolute; top: 0; left: 0.1em; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; font-size: 1.3em;"></p>
+        <p id="NowPlaying" style="color: white; position: absolute; top: 0; left: 0.1em; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; font-size: 1.3em; display: none;">♫ Now Playing: <a id="NowPlayingVideo" style="color: white;" target="_blank"></a></p>
         <p id="NowPlayingInfo" style="color: rgb(200, 200, 200); position: absolute; top: 1.5em; left: 0.1em; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; font-size: 1em;"></p>
         <p id="ClickAnywhere" style="color: rgb(180, 180, 180); position: absolute; left: 50%; transform: translateX(-50%); bottom: 0.1em; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; font-size: 350%; user-select: none;">Loading...</p>
         <p id="Warning" style="color: red; position: absolute; left: 50%; transform: translateX(-50%); top: 1em; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; font-size: 200%; user-select: none;"></p>
@@ -324,6 +340,7 @@
 
                 if (document.cookie !== "") {
                     document.getElementById("cookieLoad").style.backgroundColor = "greenyellow"
+                    document.getElementById("cookieDebug").innerText = document.cookie
                 }
             }
 
@@ -360,17 +377,20 @@
                 bgSelectFunc()
                 document.getElementById("bgSet").click()
                 CheckGUI()
+
+                document.getElementById("cookieSave").click()
             }
 
             if (document.cookie !== "") {
                 document.getElementById("cookieLoad").style.backgroundColor = "greenyellow"
+                document.getElementById("cookieDebug").innerText = document.cookie
             }
         </script>
         <script>
             var settingsOpen = false
             var t = 1
             var pg = 1
-            var numPg = 2
+            var numPg = 3
             var d = false
 
             document.getElementById("NextPg").innerText = ">"
@@ -516,6 +536,7 @@
                                     music_playlist.style.top = "0"
                                     music_playlist.style.transform = "translate(0, 0)"
                                     music_playlist.style.pointerEvents = "none"
+                                    document.getElementById("NowPlaying").style.display = "block"
                                     
                                     let frame2 = 0
                                     let interval2 = setInterval(() => {
@@ -578,13 +599,16 @@
                                     e.target.playVideo()
                                 }
 
-                                document.getElementById("NowPlaying").innerText = "♫ Now Playing: " + player.getVideoData().title
+                                document.getElementById("NowPlayingVideo").innerText = player.getVideoData().title
+                                document.getElementById("NowPlayingVideo").setAttribute("href", player.getVideoUrl())
                                 started = true
                             }
 
                             if (e.data == 0 && document.getElementById("playingSelect").value == "Video") {
                                 e.target.playVideo()
                             }
+
+                            document.getElementById("musicDebug").innerText = e.data
                         }
                     }
                 })
@@ -670,7 +694,7 @@
                 let data = player.getVideoData()
 
                 if (!data.author) {
-                    document.getElementById("NowPlaying").innerText = "♫ Now Playing:"
+                    document.getElementById("NowPlayingVideo").innerText = ""
                     document.getElementById("NowPlayingInfo").innerText = ""
                     return
                 }
@@ -875,6 +899,7 @@
                 let waitAmount = time - now
                 //document.getElementById("settings").style.height = window.innerHeight + "px"
                 document.getElementById("settingsContainer").style.height = window.innerHeight + "px"
+                document.getElementById("timeRemainDebug").innerText = waitAmount / 1000
 
                 if (startTimer) {
                     if (waitAmount < 0) {
@@ -895,10 +920,13 @@
             setInterval(tick, 10)
 
             document.getElementById("timerSet").onclick = function() {
-                var split = document.getElementById("timerDate").value.split("T")
-                var dateSplit = split[0].split("-")
-                time = new Date(dateSplit[1] + " " + dateSplit[2] + ", " + dateSplit[0] + " " + split[1] + ":00")
+                //var split = document.getElementById("timerDate").value.split("T")
+                //var dateSplit = split[0].split("-")
+                //time = new Date(dateSplit[1] + " " + dateSplit[2] + ", " + dateSplit[0] + " " + split[1] + ":00")
+                time = new Date(document.getElementById("timerDate").value)
+                document.getElementById("timerDebug").innerText = document.getElementById("timerDate").value
             }
+
             document.getElementById("titleSet").onclick = function() {
                 if (document.getElementById("titleIn").value.trim() == "") {
                     document.getElementById("title").innerText = "Game Night @ 7:00pm HST"
