@@ -4,6 +4,21 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <style>
+            html, body, .spinner, .spinner-sector {
+                box-sizing: border-box;
+            }
+
+            #spinner-bg {
+                width: 100%;
+                background-color: white;
+                position: absolute;
+                z-index: 1;
+                margin: 0;
+                padding: 0;
+                top: 0;
+                left: 0;
+            }
+            
             #gear:hover, button:hover {
                 cursor: pointer;
             }
@@ -75,6 +90,72 @@
             
             ::-webkit-scrollbar-thumb:hover {
                 background: #555; 
+            }
+
+            .spinner {
+                width: 25%;
+                aspect-ratio: 1;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                font-size: 1.75rem;
+                overflow: hidden;
+                position: absolute;
+                animation: text-color 2s ease-in-out infinite alternate;
+                left: 50%;
+                top: 50%;
+                transform: translate(-50%, -50%);
+            }
+
+            .spinner-sector {
+                position: absolute;
+                width: 100%;
+                height: 100%;
+                border-radius: 50%;
+                border: 15px solid transparent;
+                mix-blend-mode: overlay;
+                animation: rotate var(--duration) var(--timing) infinite;
+                pointer-events: none;
+            }
+
+            .spinner-sector-red {
+                border-top-color: lightcoral;
+                --duration: 1.5s;
+                --timing: ease-in-out;
+            }
+
+            .spinner-sector-blue {
+                border-left-color: lightblue;
+                --duration: 2.5s;
+                --timing: ease-out;
+            }
+
+            .spinner-sector-green {
+                border-right-color: lightgreen;
+                --duration: 1.5s;
+                --timing: ease-in-out;
+            }
+
+            @keyframes rotate {
+                0% {
+                    transform: rotate(0);
+                }
+
+                100% {
+                    transform: rotate(360deg);
+                }
+            }
+
+            @keyframes text-color {
+                0% {
+                    color: rgba(0, 0, 0, 1);
+                }
+                50% {
+                    color: rgba(0, 0, 0, 0.5);
+                }
+                100% {
+                    color: rgba(0, 0, 0, 0.1);
+                }
             }
         </style>
         <link href="favicon.png" rel="icon">
@@ -150,7 +231,7 @@
                     <button id="cookieSave" class="settings_set_button">Save Settings</button>
                     <button id="cookieLoad" class="settings_set_button_inactive">Load Settings</button>
                 </div>
-                <div id="settings-pg-3" class="settings_pg_offscreen">
+                <div id="settings-pg-3" class="settings_pg_offscreen"> <!-- TODO: VIDEO COLLAPSIBLE THING; https://www.w3schools.com/howto/tryit.asp?filename=tryhow_js_collapsible_symbol, ↑-->
                     <h1 style="font-size: xx-large;">Audio</h1>
                     <select id="playingSelect" style="color: white; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; font-weight: normal; font-size: 1.25em; background-color: rgba(0, 0, 0, 0); margin: 0.5em;">
                         <option style="background-color: black;">Playlist</option>
@@ -158,6 +239,7 @@
                     </select>
                     <input id="playlistID" type="text" style="width: 75%; height: 1em; padding: 0.5em; background-color: rgba(0, 0, 0, 0); border: 2px solid white; color: white; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; font-size: 1em;" placeholder="Playlist ID">
                     <p id="playlistEg" style="color: gray; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; font-size: small; margin-top: 0;">Eg. "PLCV1C6Xt0zUZWgMmUe_q1VxhRv5Ait0Zj"</p>
+                    <a id="videoEg" style="color: lightskyblue; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; display: none; cursor: pointer;">Examples ↓</a>
                     <button id="skipSong" class="settings_set_button">Skip Song</button>
                     <button id="playlistSet" class="settings_set_button">Set</button>
                     <h3 style="font-weight: normal;" id="VolumeHead">Volume (25%)</h3>
@@ -186,8 +268,17 @@
         <p style="color: white; position: absolute; left: 0.1em; bottom: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0;">©2024 Alex Gan | <a href="https://github.com/Alex33278/Countdown/tree/main" style="color: rgb(56, 103, 255);" target="_blank">Github</a></p>
         <p id="NowPlaying" style="color: white; position: absolute; top: 0; left: 0.1em; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; font-size: 1.3em; display: none;">♫ Now Playing: <a id="NowPlayingVideo" style="color: white;" target="_blank"></a></p>
         <p id="NowPlayingInfo" style="color: rgb(200, 200, 200); position: absolute; top: 1.5em; left: 0.1em; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; font-size: 1em;"></p>
-        <p id="ClickAnywhere" style="color: rgb(180, 180, 180); position: absolute; left: 50%; transform: translateX(-50%); bottom: 0.1em; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; font-size: 350%; user-select: none;">Loading...</p>
+        <p id="ClickAnywhere" style="color: rgb(180, 180, 180); position: absolute; left: 50%; transform: translateX(-50%); bottom: 0.1em; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; font-size: 350%; user-select: none;"></p>
         <p id="Warning" style="color: red; position: absolute; left: 50%; transform: translateX(-50%); top: 1em; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; font-size: 200%; user-select: none;"></p>
+
+        <div id="spinner-bg">
+            <div class="spinner" id="spinner">
+                Loading
+                <div class="spinner-sector spinner-sector-red" id="s-red"></div>
+                <div class="spinner-sector spinner-sector-blue" id="s-blue"></div>
+                <div class="spinner-sector spinner-sector-green" id="s-green"></div>
+            </div>
+        </div>
 
         <script>
             function mobileModeSelectInput() {
@@ -306,6 +397,7 @@
             var mobile = false
             var mobileOverride = -1
             var warning = ""
+            var loadingScreenFading = false
 
             if (/\bCrOS\b/.test(navigator.userAgent)) {
                 document.getElementById("playerVol").value = 0
@@ -374,25 +466,64 @@
                 }
             }, 100);
             
+            function LoadingScreenFade() {
+                let LSF_frame = 0
+                document.getElementById("spinner").style.animation = "none"
+
+                let LSF_interval1 = setInterval(() => {
+                    document.getElementById("spinner").style.opacity = 1 - LSF_frame
+                    
+                    if (LSF_frame >= 1) {
+                        clearInterval(LSF_interval1)
+                        LSF_frame = 0
+
+                        setTimeout(() => {
+                            let LSF_interval2 = setInterval(() => {
+                                document.getElementById("spinner-bg").style.opacity = 1 - LSF_frame
+
+                                if (LSF_frame >= 1) {
+                                    clearInterval(LSF_interval2)
+                                    document.getElementById("spinner-bg").remove()
+                                    canStart = true
+                                    return
+                                }
+
+                                LSF_frame += 0.01
+                            }, 10);
+                        }, 500);
+
+                        return
+                    }
+
+                    LSF_frame += 0.01
+                }, 10);
+            }
 
             let readyInterval = setInterval(() => {
-                if (document.readyState == "complete" && !muteVid) {
-                    if (mobile) {
-                        document.getElementById("ClickAnywhere").innerText = "Click on video to start"
+                if (document.readyState == "complete") {
+                    if (!loadingScreenFading) {
+                        LoadingScreenFade()
+                        loadingScreenFading = true
+                    }
 
-                        let music_playlist = document.getElementById("music_playlist")
-                        music_playlist.style.left = "50%"
-                        music_playlist.style.top = "50%"
-                        music_playlist.style.transform = "translate(-50%, -50%)"
-                        music_playlist.style.pointerEvents = "all"
-                    } else {
-                        document.getElementById("ClickAnywhere").innerText = "Press any key to start"
+                    if (!muteVid) {
+                        if (mobile) {
+                            document.getElementById("ClickAnywhere").innerText = "Click on video to start"
 
-                        let music_playlist = document.getElementById("music_playlist")
-                        music_playlist.style.left = "-355.5px"
-                        music_playlist.style.top = "0"
-                        music_playlist.style.transform = "translate(0, 0)"
-                        music_playlist.style.pointerEvents = "none"
+                            let music_playlist = document.getElementById("music_playlist")
+                            music_playlist.style.left = "50%"
+                            music_playlist.style.top = "50%"
+                            music_playlist.style.transform = "translate(-50%, -50%)"
+                            music_playlist.style.pointerEvents = "all"
+                        } else {
+                            document.getElementById("ClickAnywhere").innerText = "Press any key to start"
+
+                            let music_playlist = document.getElementById("music_playlist")
+                            music_playlist.style.left = "-355.5px"
+                            music_playlist.style.top = "0"
+                            music_playlist.style.transform = "translate(0, 0)"
+                            music_playlist.style.pointerEvents = "none"
+                        }
                     }
                 }
             }, 100);
@@ -616,6 +747,7 @@
             var shuffle = false
             var started = false
             var startTimer = false
+            var canStart = false
 
             function onYouTubeIframeAPIReady() {
                 player = new YT.Player('music_playlist', {
@@ -644,7 +776,7 @@
                             player.setVolume(muteVid ? 0 : 25)
                             
                             let interval = setInterval(() => {
-                                if (started) {
+                                if (started && canStart) {
                                     clearInterval(interval)
                                     clearInterval(readyInterval)
 
@@ -795,11 +927,14 @@
             function playingSelectFunc() {
                 if (document.getElementById("playingSelect").value == "Video") {
                     document.getElementById("playlistID").setAttribute("placeholder", "Video ID")
-                    document.getElementById("playlistEg").innerText = "Eg. \"fz2Uio3xbEw\""
+                    document.getElementById("playlistEg").style.display = "none"
+                    document.getElementById("videoEg").style.display = "block"
+                    //document.getElementById("playlistEg").innerText = "Eg. \"fz2Uio3xbEw\""
                     document.getElementById("skipSong").style.display = "none"
                 } else {
                     document.getElementById("playlistID").setAttribute("placeholder", "Playlist ID")
-                    document.getElementById("playlistEg").innerText = "Eg. \"PLCV1C6Xt0zUZWgMmUe_q1VxhRv5Ait0Zj\""
+                    document.getElementById("playlistEg").style.display = "block"
+                    document.getElementById("videoEg").style.display = "none"
                     document.getElementById("skipSong").style.display = "inline-block"
                 }
             }
@@ -1018,6 +1153,10 @@
                 document.getElementById("settingsContainer").style.height = window.innerHeight + "px"
                 //document.body.style.height = window.innerHeight + "px"
                 document.getElementById("timeRemainDebug").innerText = waitAmount / 1000
+
+                if (document.getElementById("spinner-bg")) {
+                    document.getElementById("spinner-bg").style.height = window.innerHeight + "px"
+                }
 
                 if (startTimer) {
                     if (waitAmount < 0) {
