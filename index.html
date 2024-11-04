@@ -3,7 +3,7 @@
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <style>
+        <style id="normal-CSS">
             html, body, .spinner, .spinner-sector {
                 box-sizing: border-box;
             }
@@ -20,7 +20,7 @@
             }
 
             #spinner-bg:hover {
-                cursor: wait;
+                cursor: auto;
                 cursor: var(--spinner-bg-cursor);
             }
             
@@ -189,7 +189,7 @@
         <link href="favicon.png" rel="icon">
         <title>Countdown</title>
     </head>
-    <body style="background-color: black; overflow: hidden;">
+    <body style="background-color: black; overflow: hidden; top: 0;">
         <img id="backImg" style="position: absolute; width: 100%; height: auto; top: 50%; left: 50%; transform: translate(-50%, -50%); filter: brightness(50%);" src="Backgrounds/Back1.jpg">
         <div id="music_playlist" style="position: absolute; left: -355.5px; margin: 0; padding: 0; top: 0; filter: brightness(0.5); pointer-events: none;"></div>
         <div id="bg_player" style="position: absolute; left: -355.5px; margin: 0; padding: 0; top: 0; filter: brightness(50%); pointer-events: none;"></div>
@@ -255,9 +255,6 @@
                         <input id="mobileMode" type="checkbox" style="margin: 0;">
                         <p class="checkbox_p">Mobile Mode</p>
                     </div>
-                    <h3 style="font-weight: normal;">Misc</h3>
-                    <button id="cookieSave" class="settings_set_button">Save Settings</button>
-                    <button id="cookieLoad" class="settings_set_button_inactive">Load Settings</button>
                 </div>
                 <div id="settings-pg-3" class="settings_pg_offscreen">
                     <h1 style="font-size: xx-large;">Audio</h1>
@@ -290,6 +287,13 @@
                     <input id="playerVol" type="range" min="0" max="100" value="25" style="width: 75%; margin: 0.5em;" step="1">
                 </div>
                 <div id="settings-pg-4" class="settings_pg_offscreen">
+                    <h1 style="font-size: xx-large;">Data</h1>
+                    <h3 style="font-weight: normal;">Cookies</h3>
+                    <p id="cookiesEnabled" style="color: red; margin-top: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;">⚠️Cookies are not enabled!⚠️<br><abbr title="Enable cookies on your browser to use this feature" style="color: lightskyblue;">Help</abbr></p>
+                    <button id="cookieSave" class="settings_set_button">Save Settings</button>
+                    <button id="cookieLoad" class="settings_set_button_inactive">Load Settings</button>
+                </div>
+                <div id="settings-pg-5" class="settings_pg_offscreen">
                     <h1 style="font-size: xx-large;">Debug</h1>
                     <h3 style="font-weight: normal;">Timer</h3>
                     <p id="timerDebug" class="settings_debug_txt">null</p>
@@ -300,9 +304,10 @@
                     <p id="cookieDebug" class="settings_debug_txt">null</p>
                     <h3 style="font-weight: normal;">Screen</h3>
                     <p id="resDebug" class="settings_debug_txt">null</p>
-                    <style style="display: block; border: 2px solid white; border-radius: 4px; width: 75%; padding: 0.5em; text-align: left; margin-left: auto; margin-right: auto; color: white;" contenteditable="true">
-
-                    </style>
+                    <h3 style="font-weight: normal;">Custom CSS</h3>
+                    <style id="custom-CSS" style="display: block; border: 2px solid white; border-radius: 4px; width: 75%; padding: 0.5em; text-align: left; margin-left: auto; margin-right: auto; color: white; height: 10em; overflow-y: scroll;" contenteditable spellcheck="false"></style>
+                    <button id="customCSSFix" class="settings_set_button">Fix</button>
+                    <button id="customCSSRestore" class="settings_set_button">Restore</button>
                 </div>
             </div>
 
@@ -327,6 +332,19 @@
             </div>
         </div>
 
+        <script>
+            var oldCSS = document.getElementById("normal-CSS").innerText
+            document.getElementById("custom-CSS").innerText = oldCSS
+            document.getElementById("normal-CSS").remove()
+
+            document.getElementById("customCSSFix").onclick = function() {
+                document.getElementById("custom-CSS").innerText = document.getElementById("custom-CSS").innerText
+            }
+
+            document.getElementById("customCSSRestore").onclick = function() {
+                document.getElementById("custom-CSS").innerText = oldCSS
+            }
+        </script>
         <script>
             var vidEgs = document.getElementsByClassName("videoEgSet")
 
@@ -384,17 +402,17 @@
         <script>
             let ctrlDown = false
             let shiftDown = false
+            let debugActive = false
 
             document.addEventListener("keydown", function(e) {
                 if (e.keyCode == 9) {
                     e.preventDefault()
                 }
 
-                if (e.keyCode == 89 && ctrlDown && shiftDown) {
-                    numPg = 4
+                if (e.keyCode == 89 && ctrlDown && shiftDown && !debugActive) {
+                    debugActive = true
+                    numPg += 1
                     let requestAmount = numPg - pg
-
-                    console.log(requestAmount)
 
                     for (var i = 0; i < requestAmount; i++) {
                         requestQueue.push("Next")
@@ -590,10 +608,9 @@
                 if (document.readyState == "complete") {
                     if (!loadingScreenFading) {
                         LoadingScreenFade()
+                        document.getElementById("spinner-bg").style.setProperty("--spinner-bg-cursor", "auto")
                         loadingScreenFading = true
                     }
-
-                    document.getElementById("spinner-bg").style.setProperty("--spinner-bg-cursor", "auto")
 
                     if (!muteVid) {
                         if (mobile) {
@@ -709,12 +726,20 @@
                 document.getElementById("cookieLoad").style.backgroundColor = "greenyellow"
                 document.getElementById("cookieDebug").innerText = document.cookie
             }
+
+            setInterval(() => {
+                if (navigator.cookieEnabled) {
+                    document.getElementById("cookiesEnabled").style.display = "none"
+                } else {
+                    document.getElementById("cookiesEnabled").style.display = "block"
+                }
+            }, 1000);
         </script>
         <script>
             var settingsOpen = false
             var t = 1
             var pg = 1
-            var numPg = 3
+            var numPg = 4
             var d = false
             var requestQueue = []
 
