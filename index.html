@@ -246,6 +246,7 @@
                         <p class="checkbox_p">Music Info</p>
                     </div>
                     <button id="fullscreen" class="settings_set_button">Toggle Fullscreen</button>
+                    <button id="PIP" class="settings_set_button">Toggle PIP (Completly Broken)</button>
                     <h3 style="font-weight: normal;">Display</h3>
                     <select id="mobileModeSelect" style="color: white; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; font-weight: normal; font-size: 1.25em; background-color: rgba(0, 0, 0, 0); margin: 0.5em;">
                         <option style="background-color: black;">Auto</option>
@@ -332,6 +333,62 @@
             </div>
         </div>
 
+        <script>
+            if ("documentPictureInPicture" in window) {
+                document.getElementById("PIP").onclick = async function() {
+                    if (window.documentPictureInPicture.window) {
+                        return
+                    }
+
+                    const pipWindow = await window.documentPictureInPicture.requestWindow({
+                        width: 320,
+                        height: 180,
+                    })
+
+                    var iframe = document.createElement("iframe")
+                    iframe.src = document.URL
+                    iframe.style.width = "100%"
+                    iframe.style.height = "100%"
+                    iframe.style.margin = "0"
+                    iframe.style.padding = "0"
+                    iframe.style.border = "none"
+                    iframe.sandbox = "allow-scripts allow-same-origin"
+                    iframe.onload = function() {
+                        setTimeout(() => {
+                            iframe.contentWindow.postMessage({ message: "YOOO SO UH DISABLE PIP PLZ" })
+                        }, 2500);
+                    };
+                    pipWindow.document.body.style.margin = "0"
+                    pipWindow.document.body.style.overflow = "hidden"
+                    pipWindow.document.body.append(iframe);
+
+                    var PIP_IFRAME_INTERVAL = setInterval(() => {
+                        iframe.style.width = pipWindow.innerWidth + "px"
+                        iframe.style.height = pipWindow.innerHeight + "px"
+                    }, 10);
+
+                    player.pauseVideo()
+
+                    pipWindow.addEventListener("pagehide", () => {
+                        clearInterval(PIP_IFRAME_INTERVAL)
+                        player.playVideo()
+                    })
+                }
+            } else {
+                document.getElementById("PIP").classList.remove("settings_set_button")
+                document.getElementById("PIP").classList.add("settings_set_button_inactive")
+                document.getElementById("PIP").setAttribute("title", "PicInPic is not supported with your browser")
+            }
+
+            window.addEventListener("message", (event) => {
+                if (event.data["message"] == "YOOO SO UH DISABLE PIP PLZ") {
+                    document.getElementById("PIP").onclick = null
+                    document.getElementById("PIP").classList.remove("settings_set_button")
+                    document.getElementById("PIP").classList.add("settings_set_button_inactive")
+                    document.getElementById("PIP").setAttribute("title", "PicInPic is not supported in a PicInPic")
+                }
+            })
+        </script>
         <script>
             var oldCSS = document.getElementById("normal-CSS").innerText
             document.getElementById("custom-CSS").innerText = oldCSS
