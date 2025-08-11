@@ -191,7 +191,7 @@
 
         <script>
             // HMMMMMMMMM I WONDER WHAT THIS DOES
-            const BUILD = 37
+            const BUILD = 38
             const YEAR = 2025
         </script>
     </head>
@@ -1271,6 +1271,13 @@
                     "Back6.jpg",
                     "Back7.jpg"
                 ]
+            }
+
+            // Preload imgs
+            var images = [];
+            for (var i = 0; i < bgs.length; i++) {
+                images[i] = new Image();
+                images[i].src = bgs[i];
             }
 
             function BackCycle() {
