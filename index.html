@@ -188,6 +188,12 @@
         </style>
         <link href="favicon.png" rel="icon">
         <title>Countdown</title>
+
+        <script>
+            // HMMMMMMMMM I WONDER WHAT THIS DOES
+            const BUILD = 37
+            const YEAR = 2025
+        </script>
     </head>
     <body style="background-color: black; overflow: hidden; top: 0;">
         <img id="backImg" style="position: absolute; width: 100%; height: auto; top: 50%; left: 50%; transform: translate(-50%, -50%); filter: brightness(50%);" src="Backgrounds/Back1.jpg">
@@ -318,7 +324,7 @@
             </div>
         </div>
         <img id="gear" src="gear.png" style="width: 48px; right: 8px; position: absolute; bottom: 4px; display: none; z-index: 2;">
-        <p style="color: white; position: absolute; left: 0.1em; bottom: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0;">©2025 Alex Gan | <a href="https://github.com/Alex33278/Countdown/tree/main" style="color: lightskyblue;" target="_blank">Github</a></p>
+        <p style="color: white; position: absolute; left: 0.1em; bottom: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0;" id="credits_and_other_info_i_guess_i_dont_give_a_damn_anymore">©2025 Alex Gan | <a href="https://github.com/Alex33278/Countdown/tree/main" style="color: lightskyblue;" target="_blank">Github</a> | Build #37</p>
         <p id="NowPlaying" style="color: white; position: absolute; top: 0; left: 0.1em; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; font-size: 1.3em; display: none;">♫ Now Playing: <a id="NowPlayingVideo" style="color: white;" target="_blank"></a></p>
         <p id="NowPlayingInfo" style="color: rgb(200, 200, 200); position: absolute; top: 1.5em; left: 0.1em; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; font-size: 1em;"></p>
         <p id="ClickAnywhere" style="color: rgb(180, 180, 180); position: absolute; left: 50%; transform: translateX(-50%); bottom: 0.1em; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; font-size: 350%; user-select: none;"></p>
@@ -332,6 +338,10 @@
                 <div class="spinner-sector spinner-sector-green" id="s-green"></div>
             </div>
         </div>
+
+        <script>
+            document.getElementById("credits_and_other_info_i_guess_i_dont_give_a_damn_anymore").innerHTML = '©' + YEAR + ' Alex Gan | <a href="https://github.com/Alex33278/Countdown/tree/main" style="color: lightskyblue;" target="_blank">Github</a> | Build #' + BUILD
+        </script>
 
         <script>
             if ("documentPictureInPicture" in window) {
@@ -726,6 +736,7 @@
                 setCookie("playingSelect", document.getElementById("playingSelect").value)
                 setCookie("bgSelect", document.getElementById("bgSelect").value)
                 setCookie("bgID", document.getElementById("bgID").value)
+
                 setCookie("titleShown", document.getElementById("titleShown").checked)
                 setCookie("timerShown", document.getElementById("timerShown").checked)
                 setCookie("footerShown", document.getElementById("footerShown").checked)
@@ -751,10 +762,11 @@
                 document.getElementById("playingSelect").value = getCookie("playingSelect")
                 document.getElementById("bgSelect").value = getCookie("bgSelect")
                 document.getElementById("bgID").value = getCookie("bgID")
-                document.getElementById("titleShown").checked = getCookie("titleShown")
-                document.getElementById("timerShown").checked = getCookie("timerShown")
-                document.getElementById("footerShown").checked = getCookie("footerShown")
-                document.getElementById("playingShown").checked = getCookie("playingShown")
+
+                document.getElementById("titleShown").checked = getCookie("titleShown") === "true"
+                document.getElementById("timerShown").checked = getCookie("timerShown") === "true"
+                document.getElementById("footerShown").checked = getCookie("footerShown") === "true"
+                document.getElementById("playingShown").checked = getCookie("playingShown") === "true"
 
                 if (getCookie("playlistID") == "") {
                     document.getElementById("playlistID").value = "PLCV1C6Xt0zUZWgMmUe_q1VxhRv5Ait0Zj"
@@ -768,9 +780,21 @@
                 document.getElementById("VolumeHead").innerText = "Volume (" + document.getElementById("playerVol").value + "%)"
                 player.setVolume(document.getElementById("playerVol").value)
 
-                playingSelectFunc()
-                bgSelectFunc()
-                CheckGUI()
+                try {
+                    playingSelectFunc()
+                } catch(e) {
+                    console.warn("Failed to execute playingSelectFunc: " + e.toString())
+                }
+                try {
+                    bgSelectFunc()
+                } catch(e) {
+                    console.warn("Failed to execute bgSelectFunc: " + e.toString())
+                }
+                try {
+                    CheckGUI()
+                } catch(e) {
+                    console.warn("Failed to execute CheckGUI: " + e.toString())
+                }
 
                 document.getElementById("cookieSave").click()
             }
@@ -1213,7 +1237,7 @@
             const TESTING = false
 
             if (TESTING) {
-                let numBgs = 10
+                let numBgs = 8
                 let bgFileType = [".png", ".jpg", ".jpeg", ".webp", ".gif", ".svg", ".apng", ".avif"]
 
                 for (let index = 0; index < numBgs; index++) {
@@ -1238,16 +1262,14 @@
                 console.log(bgs)
             } else {
                 bgs = [
-                    "Back0.png",
+                    "Back0.jpg",
                     "Back1.jpg",
-                    "Back2.png",
-                    "Back3.png",
-                    "Back4.png",
-                    "Back5.png",
+                    "Back2.jpg",
+                    "Back3.jpg",
+                    "Back4.jpg",
+                    "Back5.jpg",
                     "Back6.jpg",
-                    "Back7.png",
-                    "Back8.webp",
-                    "Back9.webp"
+                    "Back7.jpg"
                 ]
             }
 
