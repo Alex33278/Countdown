@@ -318,7 +318,7 @@
             </div>
         </div>
         <img id="gear" src="gear.png" style="width: 48px; right: 8px; position: absolute; bottom: 4px; display: none; z-index: 2;">
-        <p style="color: white; position: absolute; left: 0.1em; bottom: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0;">©2024 Alex Gan | <a href="https://github.com/Alex33278/Countdown/tree/main" style="color: lightskyblue;" target="_blank">Github</a></p>
+        <p style="color: white; position: absolute; left: 0.1em; bottom: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0;">©2025 Alex Gan | <a href="https://github.com/Alex33278/Countdown/tree/main" style="color: lightskyblue;" target="_blank">Github</a></p>
         <p id="NowPlaying" style="color: white; position: absolute; top: 0; left: 0.1em; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; font-size: 1.3em; display: none;">♫ Now Playing: <a id="NowPlayingVideo" style="color: white;" target="_blank"></a></p>
         <p id="NowPlayingInfo" style="color: rgb(200, 200, 200); position: absolute; top: 1.5em; left: 0.1em; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; font-size: 1em;"></p>
         <p id="ClickAnywhere" style="color: rgb(180, 180, 180); position: absolute; left: 50%; transform: translateX(-50%); bottom: 0.1em; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; font-size: 350%; user-select: none;"></p>
@@ -730,8 +730,6 @@
                 setCookie("timerShown", document.getElementById("timerShown").checked)
                 setCookie("footerShown", document.getElementById("footerShown").checked)
                 setCookie("playingShown", document.getElementById("playingShown").checked)
-                setCookie("mobileModeSelect", document.getElementById("mobileModeSelect").value)
-                setCookie("mobileMode", document.getElementById("mobileMode").checked)
 
                 if (document.cookie !== "") {
                     document.getElementById("cookieLoad").style.backgroundColor = "greenyellow"
@@ -746,6 +744,7 @@
 
                 document.getElementById("titleIn").value = getCookie("title")
                 document.getElementById("timerDate").value = getCookie("timerDate")
+                document.getElementById("needmorepeople").checked = getCookie("needmorepeople")
                 document.getElementById("playerVol").value = getCookie("playerVol")
                 document.getElementById("footerText").value = getCookie("footerText")
                 document.getElementById("playlistID").value = getCookie("playlistID")
@@ -756,8 +755,6 @@
                 document.getElementById("timerShown").checked = getCookie("timerShown")
                 document.getElementById("footerShown").checked = getCookie("footerShown")
                 document.getElementById("playingShown").checked = getCookie("playingShown")
-                document.getElementById("mobileMode").checked = getCookie("mobileMode")
-                document.getElementById("mobileModeSelect").value = getCookie("mobileModeSelect")
 
                 if (getCookie("playlistID") == "") {
                     document.getElementById("playlistID").value = "PLCV1C6Xt0zUZWgMmUe_q1VxhRv5Ait0Zj"
@@ -765,16 +762,15 @@
 
                 document.getElementById("titleSet").click()
                 document.getElementById("timerSet").click()
-                document.getElementById("needmorepeople").checked = getCookie("needmorepeople")
                 document.getElementById("playlistSet").click()
                 document.getElementById("footerSet").click()
+                document.getElementById("bgSet").click()
                 document.getElementById("VolumeHead").innerText = "Volume (" + document.getElementById("playerVol").value + "%)"
+                player.setVolume(document.getElementById("playerVol").value)
 
                 playingSelectFunc()
                 bgSelectFunc()
-                document.getElementById("bgSet").click()
                 CheckGUI()
-                mobileModeSelectInput()
 
                 document.getElementById("cookieSave").click()
             }
@@ -1102,9 +1098,6 @@
                     document.getElementById("videoEg").style.display = "block"
                     //document.getElementById("playlistEg").innerText = "Eg. \"fz2Uio3xbEw\""
                     document.getElementById("skipSong").style.display = "none"
-                    document.getElementById("videoEgList").style.maxHeight = content.scrollHeight + "px"
-                    document.getElementById("videoEgList").style.border = "2px solid white"
-                    document.getElementById("videoEg").innerText = "Examples ↑"
                 } else {
                     document.getElementById("playlistID").setAttribute("placeholder", "Playlist ID")
                     document.getElementById("playlistEg").style.display = "block"
@@ -1209,7 +1202,9 @@
             }
 
             document.getElementById("skipSong").onclick = function() {
+                player.setLoop(false)
                 player.nextVideo()
+                shuffle = false
             }
         </script>
         <script>
